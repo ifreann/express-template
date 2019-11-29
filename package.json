@@ -1,0 +1,21 @@
+{
+  "name": "express",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "browser-sync": "^2.26.7",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon -q server"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "app/*"
+    ]
+  },
+  "author": "",
+  "license": "ISC"
+}

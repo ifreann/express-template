@@ -2,14 +2,33 @@ console.clear();
 const express = require('express');
 const app = express();
 const bs = require("browser-sync").create();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// register client directory as root
-app.use(express.static('app'));
-
-// needed for parsing application/json, whatever that means. Can't see req.body's without these ¯\_(ツ)_/¯
-app.use(express.urlencoded({ extended: false }));
+// needed for parsing application/json. req's won't have a body without it ¯\_(ツ)_/¯
 app.use(express.json());
+
+// handle GET requests. app.get doesn't work as you'd expect with the `app.use(express.static...)` below, so it's done this way instead
+app.use(function (req, res, next) {
+	if (req.url.endsWith('.json')) {
+		console.log(Object.keys(req));
+		console.log(`${req.baseUrl} was requested.`);
+	}
+	next();
+});
+
+// register app directory as root
+app.use(express.static('app'));
+// register data directory for GET requests
+app.use(express.static('data'));
+
+// handle POST requests
+app.post('', (req, res) => {
+	const jsonData = req.body;
+	console.log(jsonData);
+	jsonData.serverMessage = 'hello from server :^)';
+	res.send(jsonData);
+	res.end();
+});
 
 // start server
 app.listen(port);
@@ -22,19 +41,7 @@ const bsConfig = {
 	index: 'app/index.html',
 	files: 'app/*',
 	proxy: "localhost:" + port,
-	port: port + 1
+	port: port + 1,
+	open: false
 }
 bs.init(bsConfig);
-
-app.get('/', (req, res) => {
-	console.log("Got a GET request");
-	// res.sendFile(__dirname + '\\index.html');
-});
-
-app.post('/', function (req, res) {
-	console.log("Got a POST");
-	console.log(req.body);
-	res.json('REEEEEEE');
-});
-
-module.exports = app;

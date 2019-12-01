@@ -1,5 +1,7 @@
-const btn = document.querySelector('button');
-btn.addEventListener('click', getServerMessage);
+const getBtn = document.querySelector('#getBtn');
+const sendBtn = document.querySelector('#sendBtn');
+getBtn.addEventListener('click', getData);
+sendBtn.addEventListener('click', sendData);
 
 const jsonData = {
 	"name": "John",
@@ -7,17 +9,23 @@ const jsonData = {
 	"car": null
 };
 
-async function getServerMessage() {
+async function getData() {
 
-	// get, very easy
-	const data = await (await fetch('data/data.json')).json();
+	const data = await (await fetch('data.json')).json();
 	console.log(data);
 
-	// post, not so much
+}
+
+async function sendData() {
+
 	const postResponse = await fetch('', {
 		method: 'POST',
-		body: jsonData
+		body: JSON.stringify(jsonData),
+		headers: {
+			'Content-Type': 'application/json'
+    }
 	});
 
-	console.log(await postResponse.text());
+	console.log((await postResponse.json()).serverMessage);
+
 }
